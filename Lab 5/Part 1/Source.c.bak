@@ -1,0 +1,210 @@
+// Name: -----	ID: -----
+
+// ************************ PART 1 ************************
+
+//  (Knight’s Tour) One of the more interesting puzzlers for chess buffs is the Knight’s Tour problem, originally proposed 
+// by the mathematician Euler.The question is this: Can the chess piece called the knight move around an empty chessboard
+// and touch each of the 64 squares once and only once ? We study this intriguing problem in depth here.
+
+// Write a version of the Knight’s Tour program using a double-subscripted accessibility array. At any time, the knight should 
+// move to the square with the lowest accessibility number.In case of a tie, the knight may move to any of the tied squares.[Note:
+// As the knight moves around the chessboard, your program should reduce the accessibility numbers as more and more squares
+// become occupied.In this way, at any given time during the tour, each available square’s accessibility number will remain equal
+// to precisely the number of squares from which that square may be reached.
+
+// Run the program 64 times, one from each square of the chessboard.Determine and print the moves on the chessboard for each
+// run separately.How many full tours did you get(a full tour consists of 64 moves) ?
+
+
+#include <stdio.h>
+
+int knights_tour(int x, int y);
+int knights_tour_solve_recursive(int x, int y, int chess_board[8][8], int move_board[8][8], int current_move);
+int is_in_chess_boundary(int x, int y);
+void print_chess_board(int chess_board[8][8]);
+
+
+// Program entry function
+int main(void)
+{
+
+	// Print the title of the project
+	puts("---========= Knight's Tour =========---");
+
+	// Store the amount of times we found a knights tour
+	int total_count = 0;
+
+	// For every y from 0 -> 7
+	for (int y = 0; y != 8; y++)
+	{
+		// For every x from 0 -> 7
+		for (int x = 0; x != 8; x++)
+		{
+			// Print the title
+			printf("Run %d - Starting at (%d, %d)\n", x+y*8, x, y);
+
+			// Print the knights tour that was found
+			total_count += knights_tour(x, y);
+		}
+
+	}
+
+} // End entry function
+
+int knights_tour(int x, int y)
+{
+	// If the given x or y value is outside the boundary, quit
+	if (!is_in_chess_boundary(x, y)) {
+		printf("[ERROR] Given x, y values are out of bounds! { 0 <= x,y <= 7 }");
+		exit(-1);
+	}
+
+	// Define our chessboard with
+	// accessibility scores
+	int chess_board[8][8] = {
+		2, 3, 4, 4, 4, 4, 3, 2,
+		3, 4, 6, 6, 6, 6, 4, 3,
+		4, 6, 8, 8, 8, 8, 6, 4,
+		4, 6, 8, 8, 8, 8, 6, 4,
+		4, 6, 8, 8, 8, 8, 6, 4,
+		4, 6, 8, 8, 8, 8, 6, 4,
+		3, 4, 6, 6, 6, 6, 4, 3,
+		2, 3, 4, 4, 4, 4, 3, 2 
+	};
+
+	// Define an array to hold
+	// the moves we made
+	int move_board[8][8] = {
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0
+	};
+
+	// Run the knights tour algoritm (recursive edition)
+	// If it returns less then 64 then return 0 and don't print
+	// the movements we made
+	if (knights_tour_solve_recursive(x, y, chess_board, move_board, 0) != 64) {
+		return 0;
+	}
+
+	// Print the movement board that
+	// the algoritm found
+	print_chess_board(move_board);
+
+	// Return 1 meaning we found a path succesfully
+	return 1;
+}
+
+int knights_tour_solve_recursive(int x, int y, int chess_board[8][8], int move_board[8][8], int current_move)
+{
+	// Set the movement board to the step
+	// we currently on
+	move_board[x][y] = current_move;
+
+	// Define the possible movements
+	int moves[8][2] = { 
+		{2, -1}, {1, -2}, {-1, -2}, {-2, -1}, 
+		{-2, 1}, {-1, 2}, {1, 2}, {2, 1} 
+	};
+
+
+	// Check all possibe moves and
+	// find the one with the lowest "score"
+
+	// Hold the best move and score
+	int best_move = -1;
+	int lowest_score = 9;
+
+	// For all eight possible moves
+	for (int i = 0; i != 8; i++)
+	{
+		//printf("Testing move %d %d...\n", x + moves[i][0], y + moves[i][1]);
+		// If the move is outside the boundary of the chess board
+		if (!is_in_chess_boundary(x + moves[i][0], y + moves[i][1]))
+		{
+			//printf("Move failed, skipping\n");
+			// Skip
+			continue;
+		}
+
+		//printf("Checking if it has a lower score then what we currently have... %d\n", chess_board[x + moves[i][0]][y + moves[i][1]]);
+		// Otherwise, if it has a lower score then our current lowest score
+		// and isn't 0 (meaning we have been there already)
+		if ((chess_board[x + moves[i][0]][y + moves[i][1]] < lowest_score) &&
+			(chess_board[x + moves[i][0]][y + moves[i][1]] != 0)) {
+			// Store it as the best move
+			//printf("Found new best score: %d\n", chess_board[x + moves[i][0]][y + moves[i][1]]);
+			best_move = i;
+			lowest_score = chess_board[x + moves[i][0]][y + moves[i][1]];
+		}
+
+		// Otherwise, check the next move
+	}
+
+	// If the best move is -1, that means we can't move anywhere
+	if (best_move == -1) {
+		return 1;
+	}
+
+	// Set the spot where we where at to 0,
+	// meaning we have been there already
+	chess_board[x][y] = 0;
+
+	// Subtract an assessability score from the possible pieces
+	// now that we can't access the spot we where just on
+	for (int i = 0; i != 8; i++)
+	{
+		// If the move is outside the boundary of the chess board
+		if (!is_in_chess_boundary(x + moves[i][0], y + moves[i][1]))
+		{
+			// Skip
+			continue;
+		}
+
+		// If the possibe moves already has no accessability, skip it
+		if (chess_board[x + moves[i][0]][y + moves[i][1]] == 0) {
+			continue;
+		}
+
+		// Otherwise, subtract 1 point from its
+		// accessability score
+		chess_board[x + moves[i][0]][y + moves[i][1]] -= 1;
+	}
+
+	//printf("Best move found to be %d { %d, %d } with score %d!\n", best_move, moves[best_move][0], moves[best_move][1], lowest_score);
+
+	// Call the function again with our new chess board and possition
+	return 1 + knights_tour_solve_recursive(x + moves[best_move][0], y + moves[best_move][1], chess_board, move_board, current_move + 1);
+}
+
+int is_in_chess_boundary(int x, int y)
+{
+	// If the x and y are within the chess board boundry, this
+	// will return true!
+	return ((0 <= x && x <= 7) && (0 <= y && y <= 7));
+}
+
+void print_chess_board(int chess_board[8][8])
+{
+	// For all y's from 0 -> 7
+	for (int y = 0; y != 8; y++)
+	{
+		// For all x's from 0 -> 7
+		for (int x = 0; x != 8; x++)
+		{
+			// Print the spot on the board
+			printf("%3d", chess_board[x][y]);
+		}
+		
+		// Print a new line
+		printf("\n");
+	}
+
+	// Print an extra new line to seperate the board
+	printf("\n");
+}

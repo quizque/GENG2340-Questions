@@ -1,0 +1,30 @@
+-----------========= Knight's Tour Random Walk @ { 0, 0 } =========-----------
+This might take a bit, please be patient...
+Finished!
+
+
+
+The random walk made a total of 42 moves!
+The moves made on that board are:
+    0  1  2  3  4  5  6  7
+
+0   1 42  0 30  0  0  0 28
+
+1   0  0  2 41 18 29  0  0
+
+2   3 40 15 12 31 20 27  0
+
+3   0  0  4 19 14 17 10  0
+
+4  39  0 13 16 11 32 21 26
+
+5   0  5 38 35 24  9  0 33
+
+6  37  0  7  0  0 34 25 22
+
+7   6  0 36  0  8 23  0  0
+
+
+C:\dev\cpp\GENG2320-Eng-Software-Fundamentals\Lab 5\Part 2\Debug\Part 2.exe (process 19076) exited with code 0.
+To automatically close the console when debugging stops, enable Tools->Options->Debugging->Automatically close the console when debugging stops.
+Press any key to close this window . . .
